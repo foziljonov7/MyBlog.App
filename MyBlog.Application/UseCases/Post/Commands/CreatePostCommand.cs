@@ -1,4 +1,6 @@
 ﻿using MediatR;
+using MyBlog.Application.Abstractions;
+using MyBlog.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,12 +17,22 @@ namespace MyBlog.Application.UseCases.Post.Commands
 
     public class CreatePostCommandHandler : AsyncRequestHandler<CreatePostCommand>
     {
-        public string Title { get; set; }
-        public string Content { get; set; }
+        private readonly IApplicationDbContext context;
 
-        protected override Task Handle(CreatePostCommand request, CancellationToken cancellationToken)
+        public CreatePostCommandHandler(IApplicationDbContext context)
         {
-            throw new NotImplementedException();
+            this.context = context;
+        }
+        protected override async Task Handle(CreatePostCommand request, CancellationToken cancellationToken)
+        {
+            var entity = new Domain.Entities.Post()
+            {
+                Title = request.Title,
+                Content = request.Content
+            };
+
+            context.Posts.Add(entity);
+            await context.SaveChangesAsync(cancellationToken);
         }
     }
 }
