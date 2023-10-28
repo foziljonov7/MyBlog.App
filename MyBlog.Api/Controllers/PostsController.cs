@@ -15,6 +15,7 @@ namespace MyBlog.Api.Controllers
         {
             this.mediator = mediator;
         }
+        [HttpPost]
         public async Task<IActionResult> CreatePost(CreatePostCommand command)
         {
             await mediator.Send(command);
