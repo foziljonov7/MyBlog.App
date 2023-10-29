@@ -13,10 +13,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="UseCases\Post\Queries\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\MyBlog.Domain\MyBlog.Domain.csproj" />
   </ItemGroup>
 

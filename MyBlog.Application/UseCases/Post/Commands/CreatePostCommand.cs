@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using MyBlog.Application.Abstractions;
+using MyBlog.Application.Notifications;
 using MyBlog.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -18,10 +19,13 @@ namespace MyBlog.Application.UseCases.Post.Commands
     public class CreatePostCommandHandler : AsyncRequestHandler<CreatePostCommand>
     {
         private readonly IApplicationDbContext context;
+        private readonly IMediator mediator;
 
-        public CreatePostCommandHandler(IApplicationDbContext context)
+        public CreatePostCommandHandler(IApplicationDbContext context,
+            IMediator mediator)
         {
             this.context = context;
+            this.mediator = mediator;
         }
         protected override async Task Handle(CreatePostCommand request, CancellationToken cancellationToken)
         {
@@ -31,8 +35,13 @@ namespace MyBlog.Application.UseCases.Post.Commands
                 Content = request.Content
             };
 
-            context.Posts.Add(entity);
+            var entry = await context.Posts.AddAsync(entity, cancellationToken);
             await context.SaveChangesAsync(cancellationToken);
+
+            await mediator.Publish(new PostCreatedNotification()
+            {
+                Id = entry.Entity.Id
+            }, cancellationToken);
         }
     }
 }

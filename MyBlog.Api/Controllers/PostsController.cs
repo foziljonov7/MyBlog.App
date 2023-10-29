@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MyBlog.Application.UseCases.Post.Commands;
+using MyBlog.Application.UseCases.Post.Queries;
 
 namespace MyBlog.Api.Controllers
 {
@@ -20,6 +21,13 @@ namespace MyBlog.Api.Controllers
         {
             await mediator.Send(command);
             return Ok();
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetPosts()
+        {
+            var request = await mediator.Send(new GetPostsQuery());
+
+            return Ok(request);
         }
     }
 }
